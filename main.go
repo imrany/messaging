@@ -16,9 +16,9 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	v1 "github.com/imrany/smart_spore_hub/server/internal/v1"
-	customMiddleware "github.com/imrany/smart_spore_hub/server/middleware"
-	"github.com/imrany/smart_spore_hub/server/pkg/whatsapp"
+	v1 "github.com/imrany/whats-email/internal/v1"
+	customMiddleware "github.com/imrany/whats-email/middleware"
+	"github.com/imrany/whats-email/pkg/whatsapp"
 
 	_ "modernc.org/sqlite"
 )

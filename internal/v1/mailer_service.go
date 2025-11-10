@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/imrany/gemmie/gemmie-server/pkg/mailer"
+	"github.com/imrany/whats-email/pkg/mailer"
 	"github.com/spf13/viper"
 )
 

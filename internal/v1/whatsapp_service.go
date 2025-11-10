@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/imrany/smart_spore_hub/server/pkg/whatsapp"
+	"github.com/imrany/whats-email/pkg/whatsapp"
 )
 
 type WhatsAppRequest struct {

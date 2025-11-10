@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	v1 "github.com/imrany/smart_spore_hub/server/internal/v1"
+	v1 "github.com/imrany/whats-email/internal/v1"
 )
 
 // respondError sends a JSON error response
