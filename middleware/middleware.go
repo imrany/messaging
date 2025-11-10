@@ -1,23 +1,10 @@
 package middleware
 
 import (
-	"encoding/json"
 	"log/slog"
 	"net/http"
 	"time"
-
-	v1 "github.com/imrany/whats-email/internal/v1"
 )
-
-// respondError sends a JSON error response
-func respondError(w http.ResponseWriter, status int, message string) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(v1.Response{
-		Success: false,
-		Message: message,
-	})
-}
 
 // LoggingMiddleware logs HTTP requests
 func LoggingMiddleware(next http.Handler) http.Handler {
