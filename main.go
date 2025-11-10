@@ -16,7 +16,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/imrany/smart_spore_hub/server/database"
 	v1 "github.com/imrany/smart_spore_hub/server/internal/v1"
 	customMiddleware "github.com/imrany/smart_spore_hub/server/middleware"
 	"github.com/imrany/smart_spore_hub/server/pkg/whatsapp"
@@ -40,8 +39,6 @@ func createServer() *http.Server {
 
 	// Public routes
 	r.Get("/health", v1.HealthHandler)
-	r.Post("/v1/profile/create", v1.CreateProfile)
-	r.Post("/v1/profile/login", v1.LoginUser)
 
 	// Protected routes
 	r.Route("/api/v1", func(r chi.Router) {
@@ -49,25 +46,6 @@ func createServer() *http.Server {
 
 		r.Post("/mailer/send", v1.SendMail)
 		r.Post("/whatsapp/send", v1.SendWhatsAppMessage)
-
-		r.Put("/profile/{id}", v1.UpdateProfile)
-		r.Delete("/profile/{id}", v1.DeleteProfile)
-		r.Get("/profile/{id}", v1.GetUserProfile) // Modified route
-
-		r.Get("/notification/preferences/{user_id}", v1.GetNotificationPreferences)
-		r.Put("/notification/preferences/{user_id}", v1.UpdateNotificationPreferences)
-
-		r.Get("/courses", v1.GetAllCourses)
-
-		r.Get("/hubs/{user_id}", v1.GetUserHubs)
-		r.Get("/hubs", v1.GetHubs)
-		r.Get("/market_listings", v1.GetMarketListing)
-		r.Get("/market_listings/{id}", v1.GetMarketListingByID)
-		r.Post("/market_listings", v1.CreateMarketListing)
-
-		r.Post("/sensors/insert", v1.InsertNewSensorReadings)
-		r.Get("/sensors/{hub_id}", v1.GetSensorReadings)
-		r.Get("/alerts/unresolved/{hub_id}", v1.GetUnresolvedAlerts)
 	})
 
 	srv := &http.Server{
@@ -99,23 +77,6 @@ func runServer() {
 	} else {
 		slog.Info("WhatsApp client initialized successfully")
 	}
-
-	//migrations run automatically
-	if err := database.Init(viper.GetString("DB_DSN"), true); err != nil {
-		slog.Error("Failed to initialize database", "error", err)
-		os.Exit(1)
-	}
-
-	// Register cleanup on shutdown
-	defer func() {
-		if err := database.Close(); err != nil {
-			slog.Error("Failed to close database connection", "error", err)
-		} else {
-			slog.Info("Database connection closed")
-		}
-	}()
-
-	slog.Info("Database storage initialized successfully")
 
 	// Start server in goroutine
 	go func() {
@@ -167,9 +128,6 @@ func main() {
 	}
 
 	// flags
-	rootCmd.PersistentFlags().String("db-dsn", "postgresql://user:password@localhost:5432/database_name?sslmode=disable", "Database DSN")
-	rootCmd.PersistentFlags().String("jwt-secret", "your_jwt_secret_key_here", "Your JWT secret key")
-	rootCmd.PersistentFlags().String("jwt-expiration", "3600", "Your JWT expiration period")
 	rootCmd.PersistentFlags().Int("port", 8080, "Port to listen on")
 	rootCmd.PersistentFlags().String("host", "0.0.0.0", "Host to listen on")
 	rootCmd.PersistentFlags().String("SMTP_HOST", "smtp.gmail.com", "SMTP HOST (env: SMTP_HOST)")
@@ -179,9 +137,6 @@ func main() {
 	rootCmd.PersistentFlags().String("SMTP_EMAIL", "", "SMTP Email (env: SMTP_EMAIL)")
 
 	// Bind flags to viper
-	viper.BindPFlag("DB_DSN", rootCmd.PersistentFlags().Lookup("db-dsn"))
-	viper.BindPFlag("JWT_SECRET", rootCmd.PersistentFlags().Lookup("jwt-secret"))
-	viper.BindPFlag("JWT_EXPIRATION", rootCmd.PersistentFlags().Lookup("jwt-expiration"))
 	viper.BindPFlag("PORT", rootCmd.PersistentFlags().Lookup("port"))
 	viper.BindPFlag("HOST", rootCmd.PersistentFlags().Lookup("host"))
 	viper.BindPFlag("SMTP_HOST", rootCmd.PersistentFlags().Lookup("SMTP_HOST"))

@@ -1,7 +1,6 @@
-# Smart Spore Hub
+# Whats-email
 
-Smart Spore Hub is a web application for managing spore data, providing an API
-for sending emails.
+Whats-email provides an API to send emails and WhatsApp messages.
 
 ## Usage
 
